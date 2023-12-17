@@ -28,6 +28,11 @@ public class ProductController {
 
     }
 
+    @GetMapping("/price-range")
+    public Flux<ProductDTO> getByPriceRange(@RequestParam("min") double min, @RequestParam("max") double max) {
+        return productService.getProductByPriceRange(min, max);
+    }
+
     @PostMapping
     public Mono<ProductDTO> createNewProduct(@RequestBody Mono<ProductDTO> productDTOMono) {
         return productService.createNewProduct(productDTOMono);

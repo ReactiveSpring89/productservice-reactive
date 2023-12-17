@@ -1,11 +1,11 @@
 package com.app.productservice.services.impl;
 
 import com.app.productservice.models.dto.ProductDTO;
-import com.app.productservice.models.entity.Product;
 import com.app.productservice.repositories.ProductRepository;
 import com.app.productservice.services.ProductService;
 import com.app.productservice.utils.DTOEntityMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Range;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,6 +19,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Flux<ProductDTO> getAllProducts() {
         return productRepository.findAll()
+                .map(DTOEntityMapper::toDto);
+    }
+
+    @Override
+    public Flux<ProductDTO> getProductByPriceRange(double min, double max) {
+        return productRepository.findByPriceBetween(Range.closed(min, max))
                 .map(DTOEntityMapper::toDto);
     }
 
