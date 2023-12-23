@@ -9,11 +9,15 @@ import org.springframework.data.domain.Range;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.publisher.Sinks;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private Sinks.Many<ProductDTO> sinks;
 
 
     @Override
@@ -38,7 +42,8 @@ public class ProductServiceImpl implements ProductService {
     public Mono<ProductDTO> createNewProduct(Mono<ProductDTO> productDTO) {
         return productDTO.map(DTOEntityMapper::toEntity)
                 .flatMap(productRepository::insert)
-                .map(DTOEntityMapper::toDto);
+                .map(DTOEntityMapper::toDto)
+                .doOnNext(sinks::tryEmitNext);
     }
 
     @Override
